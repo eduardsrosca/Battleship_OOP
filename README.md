@@ -1,7 +1,7 @@
-# Titlu proiect
+# Battleship
 
 ## Descriere proiect
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Battleship (cunoscut și ca Battleships) este un joc de ghicire de tip strategie pentru doi jucători. Se joacă pe grile riglate (hârtie sau tablă) pe care este marcată flota de nave de război a fiecărui jucător. Locațiile flotelor sunt ascunse celuilalt jucător. Jucătorii alternează pe rând și cheamă „împușcături” la navele celuilalt jucător, iar obiectivul jocului este de a distruge flota jucătorului advers.
 
 ## Milestone #0
 
