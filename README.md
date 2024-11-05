@@ -60,4 +60,4 @@ Battleship (also known as Battleships) is a strategy type guessing game for two 
 - [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
 
 ## Resurse
-- adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
+https://en.wikipedia.org/wiki/Battleship_(game)
