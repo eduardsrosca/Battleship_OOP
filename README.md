@@ -1,6 +1,6 @@
 # Battleship Game
 
-A classic two-player battleship game implemented in C++. Players take turns placing ships, attacking each other's boards, and trying to sink all of the opponent's ships.
+A classic two-player game implemented in C++. Players take turns placing ships, attacking each other, and trying to sink all of the opponent's ships.
 
 ## Features
 
