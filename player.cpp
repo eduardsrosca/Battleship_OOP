@@ -80,6 +80,8 @@ bool Player::takeTurn(Player& opponent) {
     bool continueTurn = false;
 
     do {
+        clearScreen();
+
         std::cout << name << "'s turn:\n";
         std::cout << "Opponent's board:\n";
         attackBoard.display(false);
