@@ -23,7 +23,7 @@ public:
     /**
      * @brief Starts the game, including ship placement and game loop.
      */
-    virtual void start(); // virtual for polymorphism
+    virtual void start();
 
     virtual ~Game() = default;
 };

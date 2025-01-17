@@ -22,12 +22,18 @@ void Game::start() {
     while (!gameOver) {
         try {
             gameOver = currentPlayer->takeTurn(*opponent);
-            clearScreen();
-            std::swap(currentPlayer, opponent);
+
+            if (!gameOver) {
+                std::swap(currentPlayer, opponent);
+            }
         } catch (const std::exception& e) {
-            std::cout << e.what() << "\n";
+            std::cout << "Error: " << e.what() << "\n";
         }
+
+        clearScreen();
     }
+
+    std::cout << currentPlayer->getName() << " wins the game!\n";
 }
 
 TimedGame::TimedGame(std::string name1, std::string name2, int timeLimit)
@@ -53,22 +59,36 @@ void TimedGame::start() {
         auto startTurn = std::chrono::steady_clock::now();
 
         try {
-            std::cout << currentPlayer->getName() << "'s turn. Remaining time: " << *currentTime << " seconds.\n";
+            std::cout << "Time remaining:\n";
+            std::cout << player1.getName() << ": " << player1Time << " seconds | " << player2.getName() << ": " << player2Time << " seconds\n\n";
             gameOver = currentPlayer->takeTurn(*opponent);
-            clearScreen();
+
+            if (gameOver) {
+                break;
+            }
         } catch (const std::exception& e) {
             std::cout << e.what() << "\n";
         }
 
         auto endTurn = std::chrono::steady_clock::now();
-        *currentTime -= std::chrono::duration_cast<std::chrono::seconds>(endTurn - startTurn).count();
+        int turnDuration = std::chrono::duration_cast<std::chrono::seconds>(endTurn - startTurn).count();
+        *currentTime -= turnDuration;
 
         if (*currentTime <= 0) {
+            clearScreen();
             std::cout << currentPlayer->getName() << " ran out of time! " << opponent->getName() << " wins!\n";
-            break;
+            return;
         }
 
         std::swap(currentPlayer, opponent);
         std::swap(currentTime, opponentTime);
+
+        clearScreen();
+    }
+
+    if (!gameOver) {
+        std::cout << "Game over due to timeout.\n";
+    } else {
+        std::cout << currentPlayer->getName() << " wins the game!\n";
     }
 }

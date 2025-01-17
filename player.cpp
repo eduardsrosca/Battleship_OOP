@@ -1,5 +1,7 @@
 #include "player.h"
 #include "clearscreen.h"
+#include "command.h"
+#include "utils.h"
 #include <iostream>
 #include <limits>
 #include <cctype>
@@ -16,8 +18,8 @@ std::pair<int, int> Player::getValidatedCoordinates() {
         std::cout << "Enter row (1-10): ";
         std::cin >> row;
 
-        if (std::cin.fail() || row < 1 || row > 10) {
-            std::cout << "Invalid row. Must be a number between 1 and 10.\n";
+        if (!isWithinBounds(row, 1, 10)) {
+            std::cout << "Invalid row. Must be between 1 and 10.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
@@ -28,7 +30,7 @@ std::pair<int, int> Player::getValidatedCoordinates() {
         colChar = toupper(colChar);
         col = colChar - 'A';
 
-        if (col < 0 || col >= 10) {
+        if (!isWithinBounds(colChar, 'A', 'J')) {
             std::cout << "Invalid column. Must be between A and J.\n";
             continue;
         }
@@ -67,8 +69,11 @@ void Player::placeShips() {
             auto [row, col] = getValidatedCoordinates();
             char orientation = getValidatedOrientation();
 
-            placed = ownBoard.placeShip(row, col, orientation, static_cast<char>(ship.first[0]), ship.second);
-            if (!placed) {
+            try {
+                PlaceShipCommand command(ownBoard, row, col, orientation, static_cast<char>(ship.first[0]), ship.second);
+                command.execute();
+                placed = true;
+            } catch (const ShipPlacementException&) {
                 std::cout << "Invalid position. Try again.\n";
             }
         }
@@ -77,35 +82,40 @@ void Player::placeShips() {
 }
 
 bool Player::takeTurn(Player& opponent) {
-    bool continueTurn = false;
+    bool continueTurn = true;
 
-    do {
-        clearScreen();
+    while (continueTurn) {
+        try {
 
-        std::cout << name << "'s turn:\n";
-        std::cout << "Opponent's board:\n";
-        attackBoard.display(false);
-        std::cout << "Your own board:\n";
-        ownBoard.display(true);
+            std::cout << name << "'s turn:\n";
+            std::cout << "Opponent's board:\n";
+            opponent.ownBoard.display(false);
+            std::cout << "Your own board:\n";
+            ownBoard.display(true);
 
-        auto [row, col] = getValidatedCoordinates();
+            auto [row, col] = getValidatedCoordinates();
 
-        bool hit = opponent.ownBoard.attack(row, col);
-        attackBoard.attack(row, col);
+            AttackCommand command(opponent.ownBoard, row, col);
+            command.execute();
 
-        if (hit) {
-            std::cout << "Hit!\n";
-            if (opponent.ownBoard.isShipSunk(row, col)) {
-                std::cout << "You sunk a ship!\n";
+            if (opponent.ownBoard.getCell(row, col) == 'X') {
+                std::cout << "Hit!\n";
+                if (opponent.ownBoard.isShipSunk(row, col)) {
+                    std::cout << "You sunk a ship!\n";
+                }
                 continueTurn = false;
             } else {
-                continueTurn = true;
+                std::cout << "Miss!\n";
+                continueTurn = false;
             }
-        } else {
-            std::cout << "Miss!\n";
-            continueTurn = false;
-        }
-    } while (continueTurn);
 
-    return opponent.ownBoard.allShipsSunk();
+            if (opponent.ownBoard.allShipsSunk()) {
+                return true;
+            }
+        } catch (const InvalidAttackException&) {
+            std::cout << "Invalid attack. Try again.\n";
+        }
+    }
+
+    return false;
 }
